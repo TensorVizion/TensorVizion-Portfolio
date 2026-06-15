@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)file:///C:/Users/hellc/Downloads/tensorvizion_1.html -->
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TensorVizion — AI Model Creator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link href="./TensorVizion — AI Model Creator_files/css2" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #080E1A;
+      --surface: #0D1626;
+      --card: #111E30;
+      --border: #1C2E46;
+      --accent: #5BAFFF;
+      --pink: #E94560;
+      --green: #00E5A0;
+      --text: #C8D8EC;
+      --muted: #5A7494;
+      --white: #F0F6FF;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Space Grotesk', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ── Grid canvas ──────────────────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: .35;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5vw;
+      height: 64px;
+      background: rgba(8, 14, 26, .85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: .95rem;
+      color: var(--white);
+      letter-spacing: .04em;
+    }
+
+    .nav-logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 500;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--white);
+    }
+
+    .nav-cta {
+      background: var(--accent);
+      color: var(--bg) !important;
+      padding: .4rem 1rem;
+      border-radius: 6px;
+      font-weight: 600 !important;
+    }
+
+    .nav-cta:hover {
+      background: #7bc4ff;
+      color: var(--bg) !important;
+    }
+
+    /* ── Sections ─────────────────────────────────────────────────────────── */
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 5vw;
+    }
+
+    /* ── Hero ─────────────────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 64px;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: .75rem;
+      letter-spacing: .15em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 1.4rem;
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 440px;
+      margin-bottom: 2.4rem;
+      line-height: 1.7;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .7rem 1.5rem;
+      border-radius: 8px;
+      font-family: var(--sans);
+      font-size: .9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform .15s, box-shadow .15s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      box-shadow: 0 0 24px rgba(91, 175, 255, .3);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 36px rgba(91, 175, 255, .5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-kofi {
+      background: #FF5E5B;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255, 94, 91, .25);
+    }
+
+    .btn-kofi:hover {
+      box-shadow: 0 0 32px rgba(255, 94, 91, .45);
+    }
+
+    .btn-patreon {
+      background: #FF424D;
+      color: #fff;
+    }
+
+    /* ── Hero visual ──────────────────────────────────────────────────────── */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-orb {
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #1B3D6E 0%, #0A1628 60%, var(--bg) 100%);
+      border: 1px solid var(--border);
+      position: relative;
+      box-shadow: 0 0 80px rgba(91, 175, 255, .12), inset 0 0 60px rgba(91, 175, 255, .05);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-18px);
+      }
+    }
+
+    .hero-orb-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+    }
+
+    .orb-label {
+      font-size: .65rem;
+      letter-spacing: .2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: .5rem;
+    }
+
+    .orb-monogram {
+      font-size: 3.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .orb-sub {
+      font-size: .7rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      margin-top: .4rem;
+    }
+
+    /* orbit rings */
+    .hero-orb::before,
+    .hero-orb::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(91, 175, 255, .15);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .hero-orb::before {
+      width: 420px;
+      height: 420px;
+    }
+
+    .hero-orb::after {
+      width: 500px;
+      height: 500px;
+      opacity: .6;
+    }
+
+    /* ── Section headings ─────────────────────────────────────────────────── */
+    .section-label {
+      font-family: var(--mono);
+      font-size: .72rem;
+      letter-spacing: .18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: .7rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      max-width: 560px;
+      font-size: 1rem;
+    }
+
+    .section-head {
+      margin-bottom: 3rem;
+    }
+
+    /* ── About ────────────────────────────────────────────────────────────── */
+    #about {
+      padding: 7rem 0;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-body {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .about-body p+p {
+      margin-top: 1rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      margin-top: 1.8rem;
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: .72rem;
+      letter-spacing: .08em;
+      padding: .35rem .75rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      color: var(--accent);
+      background: rgba(91, 175, 255, .05);
+    }
+
+    .stat-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .stat-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: rgba(91, 175, 255, .1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .stat-num {
+      font-family: var(--mono);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .stat-lbl {
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    /* ── Models ───────────────────────────────────────────────────────────── */
+    #models {
+      padding: 7rem 0;
+      background: var(--surface);
+    }
+
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .model-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.6rem;
+      display: flex;
+      flex-direction: column;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      cursor: default;
+    }
+
+    .model-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .35), 0 0 0 1px rgba(91, 175, 255, .2);
+      border-color: rgba(91, 175, 255, .3);
+    }
+
+    .model-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .model-badge {
+      font-family: var(--mono);
+      font-size: .65rem;
+      letter-spacing: .1em;
+      padding: .25rem .65rem;
+      border-radius: 100px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .badge-img {
+      background: rgba(91, 175, 255, .15);
+      color: var(--accent);
+    }
+
+    .badge-nlp {
+      background: rgba(0, 229, 160, .12);
+      color: var(--green);
+    }
+
+    .badge-audio {
+      background: rgba(233, 69, 96, .15);
+      color: var(--pink);
+    }
+
+    .badge-fine {
+      background: rgba(255, 180, 50, .12);
+      color: #FFB432;
+    }
+
+    .model-likes {
+      font-family: var(--mono);
+      font-size: .75rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+    }
+
+    .model-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: .5rem;
+      font-family: var(--mono);
+    }
+
+    .model-desc {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 1.4rem;
+    }
+
+    .model-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .78rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: auto;
+    }
+
+    .model-meta {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .model-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      transition: color .2s;
+    }
+
+    .model-link:hover {
+      color: var(--green);
+    }
+
+    /* ── Stack ────────────────────────────────────────────────────────────── */
+    #stack {
+      padding: 7rem 0;
+    }
+
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 1rem;
+    }
+
+    .stack-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.4rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .7rem;
+      transition: border-color .2s, transform .2s;
+    }
+
+    .stack-item:hover {
+      border-color: rgba(91, 175, 255, .4);
+      transform: translateY(-3px);
+    }
+
+    .stack-icon {
+      font-size: 2rem;
+    }
+
+    .stack-name {
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--muted);
+      letter-spacing: .05em;
+      text-align: center;
+    }
+
+    /* ── Support ──────────────────────────────────────────────────────────── */
+    #support {
+      padding: 7rem 0;
+      background: var(--surface);
+    }
+
+    .support-inner {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .support-inner .section-desc {
+      margin: 0 auto 2.5rem;
+    }
+
+    .support-btns {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .links-row {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .plain-link {
+      font-family: var(--mono);
+      font-size: .8rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: .05em;
+      transition: color .2s;
+    }
+
+    .plain-link:hover {
+      color: var(--accent);
+    }
+
+    /* ── Footer ───────────────────────────────────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-left {
+      font-family: var(--mono);
+      font-size: .75rem;
+      color: var(--muted);
+    }
+
+    .footer-left span {
+      color: var(--accent);
+    }
+
+    /* ── Divider ──────────────────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0;
+    }
+
+    /* ── Responsive ───────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      .hero-visual {
+        display: none;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      nav .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── NAV ──────────────────────────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-logo">Tensor<span>Vizion</span></div>
+    <ul class="nav-links">
+      <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion_1.html#about">About</a></li>
+      <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion_1.html#models">Models</a></li>
+      <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion_1.html#stack">Stack</a></li>
+      <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion_1.html#support">Support</a></li>
+      <li><a href="https://huggingface.co/TensorVizion" target="_blank" class="nav-cta">Hugging Face ↗</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── HERO ─────────────────────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="hero-eyebrow">// AI Model Creator &amp; Researcher</p>
+          <h1 class="hero-title">
+            Building open<br>
+            <span class="highlight">AI models</span><br>
+            for creators.
+          </h1>
+          <p class="hero-sub">
+            Fine-tuned models, image generators, and experimental AI tools —
+            all shared freely on Hugging Face. Support the work on Ko-fi or Patreon.
+          </p>
+          <div class="hero-btns">
+            <a href="file:///C:/Users/hellc/Downloads/tensorvizion_1.html#models" class="btn btn-primary">View My
+              Models</a>
+            <a href="https://huggingface.co/TensorVizion" target="_blank" class="btn btn-outline">Hugging Face ↗</a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-orb">
+            <div class="hero-orb-text">
+              <span class="orb-label">TensorVizion</span>
+              <span class="orb-monogram">TV</span>
+              <span class="orb-sub">AI / ML</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ─────────────────────────────────────────────────────────────── -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div>
+          <p class="section-label">// About</p>
+          <h2 class="section-title">Open-source AI,<br>built for everyone.</h2>
+          <div class="about-body">
+            <p>
+              I'm TensorVizion — an independent AI researcher and model creator
+              focused on making powerful machine learning tools accessible.
+              From fine-tuned image generators to experimental NLP models, everything
+              I build gets shared publicly on Hugging Face.
+            </p>
+            <p>
+              My work sits at the intersection of generative art and practical AI tooling.
+              If you're a designer, artist, or developer, there's probably something here
+              that saves you time or sparks something new.
+            </p>
+          </div>
+          <div class="tags">
+            <!-- ✏️ Add or remove tags to match your actual skills -->
+            <span class="tag">Stable Diffusion</span>
+            <span class="tag">Fine-tuning</span>
+            <span class="tag">LoRA / SDXL</span>
+            <span class="tag">PyTorch</span>
+            <span class="tag">Diffusers</span>
+            <span class="tag">Gradio</span>
+            <span class="tag">NLP</span>
+            <span class="tag">Computer Vision</span>
+            <span class="tag">Open Source</span>
+          </div>
+        </div>
+
+        <div class="stat-block">
+          <!-- ✏️ Update these numbers to match your real HuggingFace stats -->
+          <div class="stat-item">
+            <div class="stat-icon">🤗</div>
+            <div>
+              <div class="stat-num">HuggingFace</div>
+              <div class="stat-lbl">All models released publicly</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">🎨</div>
+            <div>
+              <div class="stat-num">Image Gen</div>
+              <div class="stat-lbl">Fine-tuned diffusion models</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">☕</div>
+            <div>
+              <div class="stat-num">Ko-fi &amp; Patreon</div>
+              <div class="stat-lbl">Support keeps the GPUs running</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── MODELS ────────────────────────────────────────────────────────────── -->
+  <section id="models">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-label">// Models</p>
+        <h2 class="section-title">What I've built &amp; released.</h2>
+        <p class="section-desc">
+          Every model is free to download and use. Find them all on my Hugging Face profile.
+        </p>
+      </div>
+
+      <div class="models-grid">
+
+        <!--
+        ✏️ HOW TO ADD A MODEL CARD:
+        Copy one <div class="model-card">…</div> block,
+        paste it below the last card, and update:
+          - badge class (badge-img / badge-nlp / badge-audio / badge-fine)
+          - badge text
+          - ❤️ like count
+          - model name
+          - description
+          - downloads / likes in footer
+          - href on the "View Model" link
+      -->
+
+        <!-- Card 1 -->
+        <div class="model-card">
+          <div class="model-card-top">
+            <span class="model-badge badge-img">Image Gen</span>
+            <span class="model-likes">❤️ —</span>
+          </div>
+          <div class="model-name">Owen 4.6</div>
+          <div class="model-desc">
+            <!-- ✏️ Replace with your model's real description -->
+            A fine-tuned version of a popular Qwen model using data from Anthropics Claude Opus 4.6
+          </div>
+          <div class="model-footer">
+            <div class="model-meta">
+              <span>⬇ — downloads</span>
+            </div>
+            <a href="https://huggingface.co/TensorVizion" target="_blank" class="model-link">View Model →</a>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="model-card">
+          <div class="model-card-top">
+            <span class="model-badge badge-fine">Fine-tune</span>
+            <span class="model-likes">❤️ —</span>
+          </div>
+          <div class="model-name"> LLaMaPaca </div>
+          <div class="model-desc">
+            <!-- ✏️ Replace with your model's real description -->
+            A fine tuned version of Meta's LLaMA 3.2 tuned with stanford universitys Alpaca data set
+          </div>
+          <div class="model-footer">
+            <div class="model-meta">
+              <span>⬇ — downloads</span>
+            </div>
+            <a href="https://huggingface.co/TensorVizion" target="_blank" class="model-link">View Model →</a>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="model-card">
+          <div class="model-card-top">
+            <span class="model-badge badge-nlp">NLP</span>
+            <span class="model-likes">❤️ —</span>
+          </div>
+          <div class="model-name">BertTuned</div>
+          <div class="model-desc">
+            <!-- ✏️ Replace with your model's real description -->
+            A sentance transformer tuned version of Google's popular Bert Model
+          </div>
+          <div class="model-footer">
+            <div class="model-meta">
+              <span>⬇ — downloads</span>
+            </div>
+            <a href="https://huggingface.co/TensorVizion" target="_blank" class="model-link">View Model →</a>
+          </div>
+        </div>
+
+      </div><!-- /models-grid -->
+
+      <div style="text-align:center; margin-top:2.5rem;">
+        <a href="https://huggingface.co/TensorVizion" target="_blank" class="btn btn-outline">
+          See all models on Hugging Face ↗
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STACK ─────────────────────────────────────────────────────────────── -->
+  <section id="stack">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-label">// Stack</p>
+        <h2 class="section-title">Tools of the trade.</h2>
+      </div>
+      <div class="stack-grid">
+        <!-- ✏️ Add or remove items to match your actual stack -->
+        <div class="stack-item">
+          <div class="stack-icon">🐍</div>
+          <div class="stack-name">Python</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🔥</div>
+          <div class="stack-name">PyTorch</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🤗</div>
+          <div class="stack-name">Diffusers</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🎛</div>
+          <div class="stack-name">Gradio</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">⚡</div>
+          <div class="stack-name">CUDA</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🧠</div>
+          <div class="stack-name">Transformers</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🖼</div>
+          <div class="stack-name">SDXL</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🔗</div>
+          <div class="stack-name">LoRA</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SUPPORT ───────────────────────────────────────────────────────────── -->
+  <section id="support">
+    <div class="container">
+      <div class="support-inner">
+        <p class="section-label">// Support the work</p>
+        <h2 class="section-title">Keep the models coming.</h2>
+        <p class="section-desc">
+          Every model I release is free. If my work saves you time or sparks something
+          creative, a coffee or a membership goes a long way toward keeping the GPUs running.
+        </p>
+        <div class="support-btns">
+          <a href="https://ko-fi.com/tensorvizion" target="_blank" class="btn btn-kofi">☕ Support on Ko-fi</a>
+          <a href="https://patreon.com/tensorvizion" target="_blank" class="btn btn-patreon">🎨 Join on Patreon</a>
+        </div>
+        <div class="links-row">
+          <a href="https://huggingface.co/TensorVizion" target="_blank" class="plain-link">🤗 Hugging Face</a>
+          <a href="https://ko-fi.com/tensorvizion" target="_blank" class="plain-link">☕ Ko-fi</a>
+          <a href="https://patreon.com/tensorvizion" target="_blank" class="plain-link">🎨 Patreon</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-left">
+      <span>Tensor</span>Vizion &nbsp;·&nbsp; All models released open-source on Hugging Face.
+    </div>
+    <a href="https://huggingface.co/TensorVizion" target="_blank" class="plain-link">huggingface.co/TensorVizion ↗</a>
+  </footer>
+
+  <!-- ── JS: active nav link on scroll ─────────────────────────────────────── -->
+  <script>
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(a => a.classList.remove('active'));
+          const active = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+
+    sections.forEach(s => observer.observe(s));
+  </script>
+
+
+
+</body>
+
+</html>
