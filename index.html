@@ -1,1022 +1,975 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)file:///C:/Users/hellc/Downloads/tensorvizion_1.html -->
-<html lang="en">
-
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TensorVizion — AI Model Creator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com/">
-  <link href="./TensorVizion — AI Model Creator_files/css2" rel="stylesheet">
-  <style>
-    /* ── Reset & Base ─────────────────────────────────────────────────────── */
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #080E1A;
-      --surface: #0D1626;
-      --card: #111E30;
-      --border: #1C2E46;
-      --accent: #5BAFFF;
-      --pink: #E94560;
-      --green: #00E5A0;
-      --text: #C8D8EC;
-      --muted: #5A7494;
-      --white: #F0F6FF;
-      --mono: 'Space Mono', monospace;
-      --sans: 'Space Grotesk', sans-serif;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      font-size: 16px;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      line-height: 1.65;
-      overflow-x: hidden;
-    }
-
-    /* ── Grid canvas ──────────────────────────────────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 60px 60px;
-      opacity: .35;
-    }
-
-    /* ── Nav ──────────────────────────────────────────────────────────────── */
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 5vw;
-      height: 64px;
-      background: rgba(8, 14, 26, .85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-logo {
-      font-family: var(--mono);
-      font-size: .95rem;
-      color: var(--white);
-      letter-spacing: .04em;
-    }
-
-    .nav-logo span {
-      color: var(--accent);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: .875rem;
-      font-weight: 500;
-      transition: color .2s;
-    }
-
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: var(--white);
-    }
-
-    .nav-cta {
-      background: var(--accent);
-      color: var(--bg) !important;
-      padding: .4rem 1rem;
-      border-radius: 6px;
-      font-weight: 600 !important;
-    }
-
-    .nav-cta:hover {
-      background: #7bc4ff;
-      color: var(--bg) !important;
-    }
-
-    /* ── Sections ─────────────────────────────────────────────────────────── */
-    section {
-      position: relative;
-      z-index: 1;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 5vw;
-    }
-
-    /* ── Hero ─────────────────────────────────────────────────────────────── */
-    #hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding-top: 64px;
-    }
-
-    .hero-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: center;
-      width: 100%;
-    }
-
-    .hero-eyebrow {
-      font-family: var(--mono);
-      font-size: .75rem;
-      letter-spacing: .15em;
-      color: var(--accent);
-      text-transform: uppercase;
-      margin-bottom: 1.2rem;
-    }
-
-    .hero-title {
-      font-size: clamp(2.4rem, 5vw, 4rem);
-      font-weight: 700;
-      color: var(--white);
-      line-height: 1.1;
-      margin-bottom: 1.4rem;
-    }
-
-    .hero-title .highlight {
-      background: linear-gradient(90deg, var(--accent), var(--green));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-sub {
-      font-size: 1.1rem;
-      color: var(--muted);
-      max-width: 440px;
-      margin-bottom: 2.4rem;
-      line-height: 1.7;
-    }
-
-    .hero-btns {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .7rem 1.5rem;
-      border-radius: 8px;
-      font-family: var(--sans);
-      font-size: .9rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: transform .15s, box-shadow .15s;
-      cursor: pointer;
-      border: none;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: var(--bg);
-      box-shadow: 0 0 24px rgba(91, 175, 255, .3);
-    }
-
-    .btn-primary:hover {
-      box-shadow: 0 0 36px rgba(91, 175, 255, .5);
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--white);
-      border: 1px solid var(--border);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .btn-kofi {
-      background: #FF5E5B;
-      color: #fff;
-      box-shadow: 0 0 20px rgba(255, 94, 91, .25);
-    }
-
-    .btn-kofi:hover {
-      box-shadow: 0 0 32px rgba(255, 94, 91, .45);
-    }
-
-    .btn-patreon {
-      background: #FF424D;
-      color: #fff;
-    }
-
-    /* ── Hero visual ──────────────────────────────────────────────────────── */
-    .hero-visual {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .hero-orb {
-      width: 340px;
-      height: 340px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #1B3D6E 0%, #0A1628 60%, var(--bg) 100%);
-      border: 1px solid var(--border);
-      position: relative;
-      box-shadow: 0 0 80px rgba(91, 175, 255, .12), inset 0 0 60px rgba(91, 175, 255, .05);
-      animation: float 6s ease-in-out infinite;
-    }
-
-    @keyframes float {
-
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-18px);
-      }
-    }
-
-    .hero-orb-text {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--mono);
-    }
-
-    .orb-label {
-      font-size: .65rem;
-      letter-spacing: .2em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: .5rem;
-    }
-
-    .orb-monogram {
-      font-size: 3.5rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent), var(--green));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .orb-sub {
-      font-size: .7rem;
-      color: var(--muted);
-      letter-spacing: .1em;
-      margin-top: .4rem;
-    }
-
-    /* orbit rings */
-    .hero-orb::before,
-    .hero-orb::after {
-      content: '';
-      position: absolute;
-      border-radius: 50%;
-      border: 1px solid rgba(91, 175, 255, .15);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .hero-orb::before {
-      width: 420px;
-      height: 420px;
-    }
-
-    .hero-orb::after {
-      width: 500px;
-      height: 500px;
-      opacity: .6;
-    }
-
-    /* ── Section headings ─────────────────────────────────────────────────── */
-    .section-label {
-      font-family: var(--mono);
-      font-size: .72rem;
-      letter-spacing: .18em;
-      color: var(--accent);
-      text-transform: uppercase;
-      margin-bottom: .7rem;
-    }
-
-    .section-title {
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 1rem;
-    }
-
-    .section-desc {
-      color: var(--muted);
-      max-width: 560px;
-      font-size: 1rem;
-    }
-
-    .section-head {
-      margin-bottom: 3rem;
-    }
-
-    /* ── About ────────────────────────────────────────────────────────────── */
-    #about {
-      padding: 7rem 0;
-    }
-
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: start;
-    }
-
-    .about-body {
-      font-size: 1rem;
-      line-height: 1.8;
-      color: var(--text);
-    }
-
-    .about-body p+p {
-      margin-top: 1rem;
-    }
-
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .6rem;
-      margin-top: 1.8rem;
-    }
-
-    .tag {
-      font-family: var(--mono);
-      font-size: .72rem;
-      letter-spacing: .08em;
-      padding: .35rem .75rem;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-      color: var(--accent);
-      background: rgba(91, 175, 255, .05);
-    }
-
-    .stat-block {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .stat-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-    }
-
-    .stat-icon {
-      width: 44px;
-      height: 44px;
-      flex-shrink: 0;
-      border-radius: 10px;
-      background: rgba(91, 175, 255, .1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-    }
-
-    .stat-num {
-      font-family: var(--mono);
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--white);
-    }
-
-    .stat-lbl {
-      font-size: .8rem;
-      color: var(--muted);
-    }
-
-    /* ── Models ───────────────────────────────────────────────────────────── */
-    #models {
-      padding: 7rem 0;
-      background: var(--surface);
-    }
-
-    .models-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .model-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.6rem;
-      display: flex;
-      flex-direction: column;
-      transition: transform .2s, box-shadow .2s, border-color .2s;
-      cursor: default;
-    }
-
-    .model-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, .35), 0 0 0 1px rgba(91, 175, 255, .2);
-      border-color: rgba(91, 175, 255, .3);
-    }
-
-    .model-card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-    }
-
-    .model-badge {
-      font-family: var(--mono);
-      font-size: .65rem;
-      letter-spacing: .1em;
-      padding: .25rem .65rem;
-      border-radius: 100px;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .badge-img {
-      background: rgba(91, 175, 255, .15);
-      color: var(--accent);
-    }
-
-    .badge-nlp {
-      background: rgba(0, 229, 160, .12);
-      color: var(--green);
-    }
-
-    .badge-audio {
-      background: rgba(233, 69, 96, .15);
-      color: var(--pink);
-    }
-
-    .badge-fine {
-      background: rgba(255, 180, 50, .12);
-      color: #FFB432;
-    }
-
-    .model-likes {
-      font-family: var(--mono);
-      font-size: .75rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: .3rem;
-    }
-
-    .model-name {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: .5rem;
-      font-family: var(--mono);
-    }
-
-    .model-desc {
-      font-size: .88rem;
-      color: var(--muted);
-      line-height: 1.65;
-      flex: 1;
-      margin-bottom: 1.4rem;
-    }
-
-    .model-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: .78rem;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      padding-top: 1rem;
-      margin-top: auto;
-    }
-
-    .model-meta {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .model-link {
-      color: var(--accent);
-      text-decoration: none;
-      font-family: var(--mono);
-      font-size: .75rem;
-      font-weight: 700;
-      letter-spacing: .05em;
-      transition: color .2s;
-    }
-
-    .model-link:hover {
-      color: var(--green);
-    }
-
-    /* ── Stack ────────────────────────────────────────────────────────────── */
-    #stack {
-      padding: 7rem 0;
-    }
-
-    .stack-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 1rem;
-    }
-
-    .stack-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.4rem 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: .7rem;
-      transition: border-color .2s, transform .2s;
-    }
-
-    .stack-item:hover {
-      border-color: rgba(91, 175, 255, .4);
-      transform: translateY(-3px);
-    }
-
-    .stack-icon {
-      font-size: 2rem;
-    }
-
-    .stack-name {
-      font-family: var(--mono);
-      font-size: .72rem;
-      color: var(--muted);
-      letter-spacing: .05em;
-      text-align: center;
-    }
-
-    /* ── Support ──────────────────────────────────────────────────────────── */
-    #support {
-      padding: 7rem 0;
-      background: var(--surface);
-    }
-
-    .support-inner {
-      text-align: center;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .support-inner .section-desc {
-      margin: 0 auto 2.5rem;
-    }
-
-    .support-btns {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 3rem;
-    }
-
-    .links-row {
-      display: flex;
-      gap: 2rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .plain-link {
-      font-family: var(--mono);
-      font-size: .8rem;
-      color: var(--muted);
-      text-decoration: none;
-      letter-spacing: .05em;
-      transition: color .2s;
-    }
-
-    .plain-link:hover {
-      color: var(--accent);
-    }
-
-    /* ── Footer ───────────────────────────────────────────────────────────── */
-    footer {
-      position: relative;
-      z-index: 1;
-      border-top: 1px solid var(--border);
-      padding: 2rem 5vw;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .footer-left {
-      font-family: var(--mono);
-      font-size: .75rem;
-      color: var(--muted);
-    }
-
-    .footer-left span {
-      color: var(--accent);
-    }
-
-    /* ── Divider ──────────────────────────────────────────────────────────── */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 0;
-    }
-
-    /* ── Responsive ───────────────────────────────────────────────────────── */
-    @media (max-width: 768px) {
-      .hero-inner {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-      }
-
-      .hero-visual {
-        display: none;
-      }
-
-      .about-grid {
-        grid-template-columns: 1fr;
-      }
-
-      nav .nav-links {
-        display: none;
-      }
-    }
-  </style>
+<!-- saved from url=(0060)file:///C:/Users/hellc/Downloads/tensorvizion-portfolio.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TensorVizion — AI Developer &amp; Creative</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./TensorVizion — AI Developer &amp; Creative_files/css2" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #050A14;
+    --navy2:   #0A1628;
+    --cyan:    #00D4FF;
+    --violet:  #7B5EA7;
+    --white:   #E8EDF5;
+    --slate:   #8A95A8;
+    --slate2:  #4A5568;
+    --green:   #00FF9D;
+    --gold:    #FFB347;
+    --accent:  #FF6B6B;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  #tensor-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.25rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(5,10,20,0.65);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0,212,255,0.08);
+  }
+
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--cyan);
+    letter-spacing: 0.05em;
+  }
+
+  .nav-logo span { color: var(--violet); }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+
+  .nav-links a {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--slate);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--cyan); }
+
+  .nav-cta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+    padding: 0.5rem 1.2rem;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    transition: all 0.2s;
+  }
+
+  .nav-cta:hover { background: var(--cyan); color: var(--navy); }
+
+  /* HERO */
+  #hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 9rem 4rem 6rem;
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--cyan);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--cyan);
+  }
+
+  .hero-title {
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.25rem;
+    max-width: 900px;
+  }
+
+  .hero-title .word-vizion {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--cyan);
+  }
+
+  .hero-roles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .role-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.35rem 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid;
+  }
+
+  .role-badge.ai    { color: var(--cyan);   border-color: rgba(0,212,255,0.4);   background: rgba(0,212,255,0.06); }
+  .role-badge.design{ color: var(--violet); border-color: rgba(123,94,167,0.4);  background: rgba(123,94,167,0.06); }
+  .role-badge.seo   { color: var(--green);  border-color: rgba(0,255,157,0.4);   background: rgba(0,255,157,0.06); }
+  .role-badge.audio { color: var(--gold);   border-color: rgba(255,179,71,0.4);  background: rgba(255,179,71,0.06); }
+
+  .hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-weight: 300;
+    color: var(--slate);
+    max-width: 560px;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-actions { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--cyan);
+    color: var(--navy);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.875rem 2rem;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  }
+
+  .btn-primary:hover { background: var(--white); transform: translateY(-2px); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.875rem 2rem;
+    text-decoration: none;
+    border: 1px solid var(--slate2);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  }
+
+  .btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem; left: 4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--slate);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .scroll-line {
+    width: 40px; height: 1px;
+    background: linear-gradient(90deg, var(--slate), transparent);
+    animation: scrollpulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollpulse { 0%,100%{width:20px;opacity:0.4} 50%{width:50px;opacity:1} }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .cursor {
+    display: inline-block; width: 8px; height: 1em;
+    background: var(--cyan); vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* STATS */
+  .stats-bar {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgba(0,212,255,0.1);
+    border-bottom: 1px solid rgba(0,212,255,0.1);
+  }
+
+  .stat-item {
+    padding: 2rem 3rem;
+    border-right: 1px solid rgba(0,212,255,0.1);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-number {
+    font-size: 2.5rem; font-weight: 700;
+    color: var(--cyan); line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; color: var(--slate);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-top: 0.4rem;
+  }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; padding: 7rem 4rem; }
+
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; color: var(--violet);
+    text-transform: uppercase; letter-spacing: 0.2em;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+
+  .section-eyebrow::after {
+    content: ''; flex: 1; max-width: 3rem;
+    height: 1px; background: var(--violet);
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 1.5rem;
+  }
+
+  /* ABOUT */
+  #about { background: var(--navy2); clip-path: polygon(0 2rem, 100% 0, 100% calc(100% - 2rem), 0 100%); }
+
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: start; max-width: 1200px;
+  }
+
+  .about-text p { color: var(--slate); font-size: 1rem; line-height: 1.85; margin-bottom: 1.2rem; }
+  .about-text p strong { color: var(--white); font-weight: 600; }
+
+  .skill-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+
+  .chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(0,212,255,0.2); color: var(--cyan);
+    background: rgba(0,212,255,0.04); letter-spacing: 0.04em;
+    transition: all 0.2s; cursor: default;
+  }
+
+  .chip:hover { background: rgba(0,212,255,0.1); border-color: var(--cyan); }
+  .chip.violet { color: var(--violet); border-color: rgba(123,94,167,0.3); background: rgba(123,94,167,0.05); }
+  .chip.violet:hover { background: rgba(123,94,167,0.12); border-color: var(--violet); }
+  .chip.green { color: var(--green); border-color: rgba(0,255,157,0.3); background: rgba(0,255,157,0.04); }
+  .chip.green:hover { background: rgba(0,255,157,0.1); border-color: var(--green); }
+  .chip.gold { color: var(--gold); border-color: rgba(255,179,71,0.3); background: rgba(255,179,71,0.04); }
+  .chip.gold:hover { background: rgba(255,179,71,0.1); border-color: var(--gold); }
+
+  .about-profile {
+    background: rgba(5,10,20,0.7);
+    border: 1px solid rgba(0,212,255,0.1);
+    padding: 2rem;
+  }
+
+  .profile-header {
+    display: flex; align-items: center; gap: 1.25rem;
+    margin-bottom: 1.75rem; padding-bottom: 1.75rem;
+    border-bottom: 1px solid rgba(0,212,255,0.08);
+  }
+
+  .profile-avatar {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; font-weight: 700;
+    color: var(--navy); flex-shrink: 0;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  }
+
+  .profile-name { font-size: 1.1rem; font-weight: 700; color: var(--white); }
+
+  .profile-handle {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--cyan); margin-top: 0.15rem;
+  }
+
+  .profile-row {
+    display: flex; justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .profile-row:last-child { border-bottom: none; }
+  .profile-row .key { color: var(--slate); }
+  .profile-row .val { color: var(--white); text-align: right; }
+  .profile-row .val.cyan { color: var(--cyan); }
+  .profile-row .val.violet { color: var(--violet); }
+  .profile-row .val.green { color: var(--green); }
+  .profile-row .val.gold { color: var(--gold); }
+
+  /* PROJECTS */
+  #projects { max-width: 100%; }
+
+  .projects-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 3rem; max-width: 1200px;
+  }
+
+  .project-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px; background: rgba(0,212,255,0.07); max-width: 1200px;
+  }
+
+  .project-card {
+    background: var(--navy); padding: 2.25rem;
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .project-card::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,212,255,0.04) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+
+  .project-card:hover { background: var(--navy2); }
+  .project-card:hover::after { opacity: 1; }
+
+  .project-card.featured {
+    grid-column: span 2;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 2rem; align-items: start;
+  }
+
+  .project-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+    color: var(--cyan); letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 1rem; display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  .project-tag::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--cyan); border-radius: 50%; flex-shrink: 0;
+  }
+
+  .project-tag.violet-tag { color: var(--violet); }
+  .project-tag.violet-tag::before { background: var(--violet); }
+  .project-tag.gold-tag { color: var(--gold); }
+  .project-tag.gold-tag::before { background: var(--gold); }
+
+  .project-name {
+    font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 0.75rem; color: var(--white); line-height: 1.2;
+  }
+
+  .project-desc {
+    font-size: 0.88rem; color: var(--slate); line-height: 1.75; margin-bottom: 1.5rem;
+  }
+
+  .project-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+  .stack-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.63rem;
+    padding: 0.2rem 0.5rem;
+    background: rgba(123,94,167,0.12); border: 1px solid rgba(123,94,167,0.25);
+    color: var(--violet); letter-spacing: 0.04em;
+  }
+
+  .stack-tag.cyan-tag {
+    background: rgba(0,212,255,0.07); border-color: rgba(0,212,255,0.2); color: var(--cyan);
+  }
+
+  .project-metrics { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .metric-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.7rem;
+  }
+
+  .metric-key { color: var(--slate); }
+  .metric-val { color: var(--green); }
+
+  .project-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.8rem; font-weight: 600; color: var(--cyan);
+    text-decoration: none; letter-spacing: 0.05em; margin-top: 1.25rem;
+    transition: gap 0.2s;
+  }
+
+  .project-link:hover { gap: 0.7rem; }
+  .project-link.violet-link { color: var(--violet); }
+  .project-link.gold-link { color: var(--gold); }
+
+  /* EXPERIENCE */
+  #experience { background: var(--navy2); }
+
+  .exp-layout {
+    display: grid; grid-template-columns: 260px 1fr;
+    gap: 4rem; max-width: 1000px;
+  }
+
+  .exp-nav {
+    display: flex; flex-direction: column;
+    border-left: 1px solid rgba(0,212,255,0.15);
+  }
+
+  .exp-tab {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    padding: 0.9rem 1.4rem; color: var(--slate); cursor: pointer;
+    border-left: 2px solid transparent; margin-left: -1px;
+    transition: all 0.2s; letter-spacing: 0.04em; line-height: 1.4;
+  }
+
+  .exp-tab:hover { color: var(--white); }
+  .exp-tab.active { color: var(--cyan); border-left-color: var(--cyan); background: rgba(0,212,255,0.04); }
+
+  .exp-panel { display: none; }
+  .exp-panel.active { display: block; }
+
+  .exp-role { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; color: var(--white); margin-bottom: 0.2rem; }
+  .exp-company { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--cyan); margin-bottom: 0.2rem; }
+  .exp-period { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; color: var(--slate); margin-bottom: 1.5rem; letter-spacing: 0.05em; }
+
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.85rem; }
+
+  .exp-bullets li {
+    font-size: 0.93rem; color: var(--slate); line-height: 1.75;
+    padding-left: 1.25rem; position: relative;
+  }
+
+  .exp-bullets li::before { content: '▸'; position: absolute; left: 0; color: var(--cyan); }
+  .exp-bullets li strong { color: var(--white); }
+
+  /* EDUCATION */
+  #education {}
+
+  .edu-card {
+    background: var(--navy2); border: 1px solid rgba(255,179,71,0.12);
+    padding: 2.5rem; max-width: 700px; position: relative;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+  }
+
+  .edu-card::before {
+    content: '';  position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--gold), var(--violet));
+  }
+
+  .edu-degree { font-size: 1.4rem; font-weight: 700; color: var(--white); margin-bottom: 0.4rem; }
+  .edu-school { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--gold); margin-bottom: 0.25rem; }
+  .edu-year { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--slate); letter-spacing: 0.08em; margin-bottom: 1rem; }
+  .edu-note { font-size: 0.9rem; color: var(--slate); line-height: 1.7; }
+  .edu-note strong { color: var(--white); }
+
+  /* CONTACT */
+  #contact {
+    background: var(--navy2);
+    clip-path: polygon(0 2rem, 100% 0, 100% 100%, 0 100%);
+    padding-top: 9rem;
+  }
+
+  .contact-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6rem; align-items: start; max-width: 1200px;
+  }
+
+  .contact-headline {
+    font-size: clamp(2.5rem, 5vw, 3.75rem); font-weight: 700;
+    letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 1.5rem;
+  }
+
+  .contact-headline .accent { color: var(--cyan); }
+
+  .contact-text { font-size: 1rem; color: var(--slate); line-height: 1.8; margin-bottom: 2rem; }
+
+  .contact-links { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .contact-link {
+    display: flex; align-items: center; gap: 1rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+    color: var(--white); text-decoration: none; padding: 0.9rem 1.25rem;
+    background: rgba(0,212,255,0.03); border: 1px solid rgba(0,212,255,0.1);
+    transition: all 0.2s;
+  }
+
+  .contact-link:hover { background: rgba(0,212,255,0.08); border-color: var(--cyan); color: var(--cyan); }
+  .contact-link-icon { font-size: 1rem; width: 1.4rem; text-align: center; }
+
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+
+  .form-group input, .form-group textarea {
+    width: 100%;
+    background: rgba(5,10,20,0.6); border: 1px solid rgba(0,212,255,0.12);
+    color: var(--white); font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem; padding: 0.875rem 1rem; outline: none;
+    transition: border-color 0.2s; resize: vertical;
+  }
+
+  .form-group input::placeholder, .form-group textarea::placeholder { color: var(--slate2); }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--cyan); }
+  .form-group textarea { min-height: 120px; }
+
+  .form-submit {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--cyan); color: var(--navy);
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 700;
+    padding: 0.875rem 2rem; border: none; cursor: pointer;
+    letter-spacing: 0.05em; transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  }
+
+  .form-submit:hover { background: var(--white); transform: translateY(-2px); }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 1;
+    padding: 2rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid rgba(0,212,255,0.08);
+  }
+
+  .footer-logo { font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; color: var(--slate); }
+  .footer-copy { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--slate2); letter-spacing: 0.05em; }
+
+  /* GLOW ORBS */
+  .glow-orb { position: fixed; border-radius: 50%; pointer-events: none; filter: blur(80px); opacity: 0.11; z-index: 0; }
+  .glow-orb-1 { width: 600px; height: 600px; background: var(--cyan); top: -200px; right: -100px; }
+  .glow-orb-2 { width: 400px; height: 400px; background: var(--violet); bottom: 20%; left: -100px; }
+
+  @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } .scroll-line { animation: none; } }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    #hero, section, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .about-grid, .contact-grid, .exp-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+    .project-grid { grid-template-columns: 1fr; }
+    .project-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .stat-item { padding: 1.5rem; }
+  }
+</style>
 </head>
-
 <body>
 
-  <!-- ── NAV ──────────────────────────────────────────────────────────────── -->
-  <nav>
-    <div class="nav-logo">Tensor<span>Vizion</span></div>
-    <ul class="nav-links">
-      <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion_1.html#about">About</a></li>
-      <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion_1.html#models">Models</a></li>
-      <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion_1.html#stack">Stack</a></li>
-      <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion_1.html#support">Support</a></li>
-      <li><a href="https://huggingface.co/TensorVizion" target="_blank" class="nav-cta">Hugging Face ↗</a></li>
-    </ul>
-  </nav>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<canvas id="tensor-canvas" width="1912" height="948"></canvas>
 
-  <!-- ── HERO ─────────────────────────────────────────────────────────────── -->
-  <section id="hero">
-    <div class="container">
-      <div class="hero-inner">
-        <div class="hero-copy">
-          <p class="hero-eyebrow">// AI Model Creator &amp; Researcher</p>
-          <h1 class="hero-title">
-            Building open<br>
-            <span class="highlight">AI models</span><br>
-            for creators.
-          </h1>
-          <p class="hero-sub">
-            Fine-tuned models, image generators, and experimental AI tools —
-            all shared freely on Hugging Face. Support the work on Ko-fi or Patreon.
-          </p>
-          <div class="hero-btns">
-            <a href="file:///C:/Users/hellc/Downloads/tensorvizion_1.html#models" class="btn btn-primary">View My
-              Models</a>
-            <a href="https://huggingface.co/TensorVizion" target="_blank" class="btn btn-outline">Hugging Face ↗</a>
-          </div>
-        </div>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Tensor<span>Vizion</span></div>
+  <ul class="nav-links">
+    <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion-portfolio.html#about">About</a></li>
+    <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion-portfolio.html#projects">Projects</a></li>
+    <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion-portfolio.html#experience">Experience</a></li>
+    <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion-portfolio.html#education">Education</a></li>
+    <li><a href="file:///C:/Users/hellc/Downloads/tensorvizion-portfolio.html#contact">Contact</a></li>
+  </ul>
+  <a href="file:///C:/Users/hellc/Downloads/tensorvizion-portfolio.html#contact" class="nav-cta">Hire Me</a>
+</nav>
 
-        <div class="hero-visual">
-          <div class="hero-orb">
-            <div class="hero-orb-text">
-              <span class="orb-label">TensorVizion</span>
-              <span class="orb-monogram">TV</span>
-              <span class="orb-sub">AI / ML</span>
-            </div>
-          </div>
-        </div>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-eyebrow">AI Developer · Graphic Designer · SEO Marketer</div>
+  <h1 class="hero-title">
+    Tensor<br>
+    <span class="word-vizion">Vizion</span>
+  </h1>
+
+  <div class="hero-roles">
+    <span class="role-badge ai">AI Developer &amp; Model Trainer</span>
+    <span class="role-badge design">Graphic Designer</span>
+    <span class="role-badge seo">SEO Marketer</span>
+    <span class="role-badge audio">Audio Engineering · Honours</span>
+  </div>
+
+  <p class="hero-subtitle">
+    Building AI systems, fine-tuned language models, and the visual systems
+    that make them legible — bridging the gap between deep-tech and design
+    since 2012.
+  </p>
+
+  <div class="hero-actions">
+    <a href="file:///C:/Users/hellc/Downloads/tensorvizion-portfolio.html#projects" class="btn-primary">View My Work ↓</a>
+    <a href="file:///C:/Users/hellc/Downloads/tensorvizion-portfolio.html#contact" class="btn-secondary">Get in Touch</a>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+    <div class="stat-number">14+</div>
+    <div class="stat-label">Years in Design</div>
+  </div>
+  <div class="stat-item" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+    <div class="stat-number">5+</div>
+    <div class="stat-label">Years in AI Dev</div>
+  </div>
+  <div class="stat-item" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+    <div class="stat-number">3</div>
+    <div class="stat-label">Active Roles</div>
+  </div>
+  <div class="stat-item" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+    <div class="stat-number">3.17B</div>
+    <div class="stat-label">Params Trained</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+    <div class="about-text">
+      <div class="section-eyebrow">About</div>
+      <h2 class="section-title">Rare stack.<br>Rarer perspective.</h2>
+      <p>I'm an <strong>AI developer and model post-trainer</strong> at TensorVizion with a background that most ML engineers don't have: a decade-plus in graphic design and SEO marketing running in parallel.</p>
+      <p>That means I build fine-tuned language models with <strong>Qwen3 and Qwen2 architectures</strong>, ship production-ready UI in Next.js, and understand how to get any of it found on the internet — all at once.</p>
+      <p>My formal foundation is in <strong>Audio Engineering (Honours, Metalworks Institute)</strong>, which trained my ear for detail, precision, and the difference between a signal and noise — useful in every field I've worked in since.</p>
+
+      <div class="skill-chips">
+        <span class="chip">PyTorch</span>
+        <span class="chip">Transformers</span>
+        <span class="chip">Unsloth</span>
+        <span class="chip">Qwen3 / Qwen2</span>
+        <span class="chip">bitsandbytes</span>
+        <span class="chip">HuggingFace</span>
+        <span class="chip violet">Next.js</span>
+        <span class="chip violet">TypeScript</span>
+        <span class="chip violet">Tailwind CSS</span>
+        <span class="chip violet">Figma</span>
+        <span class="chip green">Technical SEO</span>
+        <span class="chip green">On-Page Optimization</span>
+        <span class="chip green">Content Strategy</span>
+        <span class="chip gold">Audio Engineering</span>
+        <span class="chip gold">DAW Production</span>
+        <span class="chip gold">Acoustic Design</span>
       </div>
     </div>
-  </section>
 
-  <!-- ── ABOUT ─────────────────────────────────────────────────────────────── -->
-  <section id="about">
-    <div class="container">
-      <div class="about-grid">
-        <div>
-          <p class="section-label">// About</p>
-          <h2 class="section-title">Open-source AI,<br>built for everyone.</h2>
-          <div class="about-body">
-            <p>
-              I'm TensorVizion — an independent AI researcher and model creator
-              focused on making powerful machine learning tools accessible.
-              From fine-tuned image generators to experimental NLP models, everything
-              I build gets shared publicly on Hugging Face.
-            </p>
-            <p>
-              My work sits at the intersection of generative art and practical AI tooling.
-              If you're a designer, artist, or developer, there's probably something here
-              that saves you time or sparks something new.
-            </p>
-          </div>
-          <div class="tags">
-            <!-- ✏️ Add or remove tags to match your actual skills -->
-            <span class="tag">Stable Diffusion</span>
-            <span class="tag">Fine-tuning</span>
-            <span class="tag">LoRA / SDXL</span>
-            <span class="tag">PyTorch</span>
-            <span class="tag">Diffusers</span>
-            <span class="tag">Gradio</span>
-            <span class="tag">NLP</span>
-            <span class="tag">Computer Vision</span>
-            <span class="tag">Open Source</span>
+    <div>
+      <div class="about-profile" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="profile-header">
+          <div class="profile-avatar">TV</div>
+          <div>
+            <div class="profile-name">TensorVizion</div>
+            <div class="profile-handle">@TensorVizion</div>
           </div>
         </div>
-
-        <div class="stat-block">
-          <!-- ✏️ Update these numbers to match your real HuggingFace stats -->
-          <div class="stat-item">
-            <div class="stat-icon">🤗</div>
-            <div>
-              <div class="stat-num">HuggingFace</div>
-              <div class="stat-lbl">All models released publicly</div>
-            </div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon">🎨</div>
-            <div>
-              <div class="stat-num">Image Gen</div>
-              <div class="stat-lbl">Fine-tuned diffusion models</div>
-            </div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon">☕</div>
-            <div>
-              <div class="stat-num">Ko-fi &amp; Patreon</div>
-              <div class="stat-lbl">Support keeps the GPUs running</div>
-            </div>
-          </div>
-        </div>
+        <div class="profile-row"><span class="key">AI Role</span><span class="val cyan">AI Dev &amp; Model Post-Trainer</span></div>
+        <div class="profile-row"><span class="key">At TensorVizion since</span><span class="val cyan">2020 – Present</span></div>
+        <div class="profile-row"><span class="key">Design Role</span><span class="val violet">Graphic Designer</span></div>
+        <div class="profile-row"><span class="key">At LiquidVizion since</span><span class="val violet">2012 – Present</span></div>
+        <div class="profile-row"><span class="key">SEO Role</span><span class="val green">SEO Marketer</span></div>
+        <div class="profile-row"><span class="key">At SellSuite since</span><span class="val green">2019 – Present</span></div>
+        <div class="profile-row"><span class="key">Education</span><span class="val gold">Audio Engineering, Honours</span></div>
+        <div class="profile-row"><span class="key">Graduated</span><span class="val gold">Metalworks Institute, 2014</span></div>
+        <div class="profile-row"><span class="key">HuggingFace</span><span class="val cyan">TensorVizion ↗</span></div>
+        <div class="profile-row"><span class="key">GitHub</span><span class="val cyan">TensorVizion ↗</span></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <div class="divider"></div>
-
-  <!-- ── MODELS ────────────────────────────────────────────────────────────── -->
-  <section id="models">
-    <div class="container">
-      <div class="section-head">
-        <p class="section-label">// Models</p>
-        <h2 class="section-title">What I've built &amp; released.</h2>
-        <p class="section-desc">
-          Every model is free to download and use. Find them all on my Hugging Face profile.
-        </p>
-      </div>
-
-      <div class="models-grid">
-
-        <!--
-        ✏️ HOW TO ADD A MODEL CARD:
-        Copy one <div class="model-card">…</div> block,
-        paste it below the last card, and update:
-          - badge class (badge-img / badge-nlp / badge-audio / badge-fine)
-          - badge text
-          - ❤️ like count
-          - model name
-          - description
-          - downloads / likes in footer
-          - href on the "View Model" link
-      -->
-
-        <!-- Card 1 -->
-        <div class="model-card">
-          <div class="model-card-top">
-            <span class="model-badge badge-img">Image Gen</span>
-            <span class="model-likes">❤️ —</span>
-          </div>
-          <div class="model-name">Owen 4.6</div>
-          <div class="model-desc">
-            <!-- ✏️ Replace with your model's real description -->
-            A fine-tuned version of a popular Qwen model using data from Anthropics Claude Opus 4.6
-          </div>
-          <div class="model-footer">
-            <div class="model-meta">
-              <span>⬇ — downloads</span>
-            </div>
-            <a href="https://huggingface.co/TensorVizion" target="_blank" class="model-link">View Model →</a>
-          </div>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="model-card">
-          <div class="model-card-top">
-            <span class="model-badge badge-fine">Fine-tune</span>
-            <span class="model-likes">❤️ —</span>
-          </div>
-          <div class="model-name"> LLaMaPaca </div>
-          <div class="model-desc">
-            <!-- ✏️ Replace with your model's real description -->
-            A fine tuned version of Meta's LLaMA 3.2 tuned with stanford universitys Alpaca data set
-          </div>
-          <div class="model-footer">
-            <div class="model-meta">
-              <span>⬇ — downloads</span>
-            </div>
-            <a href="https://huggingface.co/TensorVizion" target="_blank" class="model-link">View Model →</a>
-          </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="model-card">
-          <div class="model-card-top">
-            <span class="model-badge badge-nlp">NLP</span>
-            <span class="model-likes">❤️ —</span>
-          </div>
-          <div class="model-name">BertTuned</div>
-          <div class="model-desc">
-            <!-- ✏️ Replace with your model's real description -->
-            A sentance transformer tuned version of Google's popular Bert Model
-          </div>
-          <div class="model-footer">
-            <div class="model-meta">
-              <span>⬇ — downloads</span>
-            </div>
-            <a href="https://huggingface.co/TensorVizion" target="_blank" class="model-link">View Model →</a>
-          </div>
-        </div>
-      </div>
-        <!-- Card 4 -->
-        <div class="model-card">
-          <div class="model-card-top">
-            <span class="model-badge badge-nlp">NLP</span>
-            <span class="model-likes">❤️ —</span>
-          </div>
-          <div class="model-name">RagSeek-v1</div>
-          <div class="model-desc">
-            <!-- ✏️ Replace with your model's real description -->
-            A RAG Version of the popular Deepseek LLM
-          </div>
-          <div class="model-footer">
-            <div class="model-meta">
-              <span>⬇ — downloads</span>
-            </div>
-            <a href="https://huggingface.co/TensorVizion/RagSeek-v1" target="_blank" class="model-link">View Model →</a>
-          </div>
-        </div>
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="projects-header">
+    <div>
+      <div class="section-eyebrow">Projects</div>
+      <h2 class="section-title">Things I've shipped.</h2>
     </div>
-    
-      <!-- /models-grid -->
+    <a href="https://github.com/TensorVizion" class="btn-secondary" style="align-self:flex-end" target="_blank">GitHub ↗</a>
+  </div>
 
-      <div style="text-align:center; margin-top:2.5rem;">
-        <a href="https://huggingface.co/TensorVizion" target="_blank" class="btn btn-outline">
-          See all models on Hugging Face ↗
+  <div class="project-grid">
+
+    <!-- FEATURED: Obsidian Blog UI -->
+    <div class="project-card featured" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+      <div>
+        <div class="project-tag violet-tag">Featured · Open Source · Next.js</div>
+        <div class="project-name">Obsidian Bold Blog UI</div>
+        <p class="project-desc">A bold, dark-mode blog UI built with Next.js and v0, deployed on Vercel. A brutalist visual system designed for developers who want their writing to hit as hard as their code — obsidian palette, strong type hierarchy, and zero visual noise.</p>
+        <div class="project-stack">
+          <span class="stack-tag">Next.js</span>
+          <span class="stack-tag">TypeScript</span>
+          <span class="stack-tag">CSS</span>
+          <span class="stack-tag">v0 / Vercel</span>
+          <span class="stack-tag">shadcn/ui</span>
+        </div>
+        <a href="https://github.com/TensorVizion/Obsidian-Bold-Blog-UI" class="project-link violet-link" target="_blank">View on GitHub →</a>
+      </div>
+      <div class="project-metrics">
+        <div class="metric-row"><span class="metric-key">Stack</span><span class="metric-val">TypeScript 91%</span></div>
+        <div class="metric-row"><span class="metric-key">Live Deploy</span><span class="metric-val">Vercel ✓</span></div>
+        <div class="metric-row"><span class="metric-key">Architecture</span><span class="metric-val">App Router</span></div>
+        <div class="metric-row"><span class="metric-key">CSS</span><span class="metric-val">Tailwind + Custom</span></div>
+        <div class="metric-row"><span class="metric-key">License</span><span class="metric-val">Public Repo</span></div>
+      </div>
+    </div>
+
+    <!-- Owen 4.6 -->
+    <div class="project-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+      <div class="project-tag">HuggingFace · LLM Fine-Tune</div>
+      <div class="project-name">O-Wen 4.6</div>
+      <p class="project-desc">A Qwen3-architecture causal language model post-trained and fine-tuned by TensorVizion. Built with Unsloth for efficient training, supports text-generation-inference and conversational endpoints. Apache 2.0 licensed.</p>
+      <div class="project-stack">
+        <span class="stack-tag cyan-tag">Qwen3</span>
+        <span class="stack-tag cyan-tag">Transformers</span>
+        <span class="stack-tag cyan-tag">Unsloth</span>
+        <span class="stack-tag cyan-tag">TGI</span>
+      </div>
+      <a href="https://huggingface.co/TensorVizion/O-Wen-4.6" class="project-link" target="_blank">View on HuggingFace →</a>
+    </div>
+
+    <!-- Jinja LLM -->
+    <div class="project-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+      <div class="project-tag gold-tag">HuggingFace · 3.17B Model</div>
+      <div class="project-name">Jinja LLM</div>
+      <p class="project-desc">A 3.17 billion parameter Qwen2-architecture model quantized to 4-bit with bitsandbytes for efficient local inference. Jinja brings serious model weight to resource-constrained environments without sacrificing capability.</p>
+      <div class="project-stack">
+        <span class="stack-tag">Qwen2</span>
+        <span class="stack-tag">bitsandbytes</span>
+        <span class="stack-tag">4-bit Quant</span>
+        <span class="stack-tag">safetensors</span>
+      </div>
+      <a href="https://huggingface.co/TensorVizion/Jinja" class="project-link gold-link" target="_blank">View on HuggingFace →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-eyebrow">Experience</div>
+  <h2 class="section-title" style="margin-bottom:3rem">Where I work.</h2>
+
+  <div class="exp-layout">
+    <div class="exp-nav">
+      <div class="exp-tab active" onclick="switchTab(0)">TensorVizion</div>
+      <div class="exp-tab" onclick="switchTab(1)">LiquidVizion</div>
+      <div class="exp-tab" onclick="switchTab(2)">SellSuite</div>
+    </div>
+
+    <div>
+      <div class="exp-panel active" id="panel-0">
+        <div class="exp-role">AI Developer &amp; Model Post-Trainer</div>
+        <div class="exp-company">TensorVizion</div>
+        <div class="exp-period">2020 – Present</div>
+        <ul class="exp-bullets">
+          <li><strong>Fine-tunes and post-trains large language models</strong> using Qwen3 and Qwen2 architectures, with Unsloth for efficient training pipelines.</li>
+          <li>Published <strong>O-Wen 4.6</strong>, a conversational Qwen3 causal LM supporting text-generation-inference and local endpoints under the Apache 2.0 license.</li>
+          <li>Built <strong>Jinja</strong>, a 3.17B parameter Qwen2 model quantized to 4-bit with bitsandbytes — optimized for local inference on consumer hardware.</li>
+          <li>Ships <strong>production UI and developer tools</strong> alongside models, including the Obsidian Bold Blog UI in Next.js / TypeScript on Vercel.</li>
+          <li>Manages model deployment, versioning, and documentation on <strong>HuggingFace Hub</strong> under the TensorVizion namespace.</li>
+        </ul>
+      </div>
+
+      <div class="exp-panel" id="panel-1">
+        <div class="exp-role">Graphic Designer</div>
+        <div class="exp-company">LiquidVizion</div>
+        <div class="exp-period">2012 – Present</div>
+        <ul class="exp-bullets">
+          <li><strong>14+ years</strong> of professional graphic design across brand identity, digital interfaces, print, and motion work.</li>
+          <li>Developed visual systems and brand identities for a range of clients, with a signature style that blends <strong>dark palettes, bold typography, and high-contrast layouts</strong>.</li>
+          <li>Design work directly informs AI product development at TensorVizion — the rare combination of ML depth and design intuition creates products that feel as good as they perform.</li>
+          <li>Proficient across the full <strong>Adobe Creative Suite</strong>, Figma, and modern design-to-code workflows.</li>
+        </ul>
+      </div>
+
+      <div class="exp-panel" id="panel-2">
+        <div class="exp-role">SEO Marketer</div>
+        <div class="exp-company">SellSuite</div>
+        <div class="exp-period">2019 – Present</div>
+        <ul class="exp-bullets">
+          <li>Drives <strong>organic search strategy</strong> across client portfolios — technical SEO, on-page optimization, content strategy, and link architecture.</li>
+          <li>Applies a developer's mindset to SEO: schema markup, Core Web Vitals, crawlability, and structured data are first-class concerns, not afterthoughts.</li>
+          <li>Bridges the gap between <strong>technical implementation and content strategy</strong>, advising development teams on performance and discoverability simultaneously.</li>
+          <li>AI-fluency from TensorVizion work directly accelerates content production pipelines and keyword research tooling at SellSuite.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-eyebrow">Education</div>
+  <h2 class="section-title" style="margin-bottom:2.5rem">Foundation.</h2>
+
+  <div class="edu-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+    <div class="edu-degree">Audio Engineering · Honours</div>
+    <div class="edu-school">Metalworks Institute</div>
+    <div class="edu-year">Graduated 2014</div>
+    <p class="edu-note">
+      A rigorous technical and creative program in audio engineering, acoustics, signal processing, 
+      and studio production. Graduated <strong>with Honours</strong> — the precision and systems thinking 
+      that audio engineering demands translates directly into how I approach AI model training, 
+      interface design, and technical optimization today.
+    </p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-grid" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+    <div>
+      <div class="section-eyebrow">Contact</div>
+      <h2 class="contact-headline">Let's build<br>something<br><span class="accent">worth seeing.</span></h2>
+      <p class="contact-text">Open to collaborations across AI development, UI/UX design, and SEO consulting. If you've got a problem that sits at the edge of those disciplines, I'm probably the right person to talk to.</p>
+      <div class="contact-links">
+        <a href="https://github.com/TensorVizion" class="contact-link" target="_blank">
+          <span class="contact-link-icon">⌥</span>
+          github.com/TensorVizion
+        </a>
+        <a href="https://huggingface.co/TensorVizion" class="contact-link" target="_blank">
+          <span class="contact-link-icon">🤗</span>
+          huggingface.co/TensorVizion
+        </a>
+        <a href="https://void-studio-brutalist-portfol-tau.vercel.app/" class="contact-link" target="_blank">
+          <span class="contact-link-icon">↗</span>
+          Obsidian Blog UI — Live Demo
         </a>
       </div>
     </div>
-  </section>
 
-  <!-- ── STACK ─────────────────────────────────────────────────────────────── -->
-  <section id="stack">
-    <div class="container">
-      <div class="section-head">
-        <p class="section-label">// Stack</p>
-        <h2 class="section-title">Tools of the trade.</h2>
-      </div>
-      <div class="stack-grid">
-        <!-- ✏️ Add or remove items to match your actual stack -->
-        <div class="stack-item">
-          <div class="stack-icon">🐍</div>
-          <div class="stack-name">Python</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-icon">🔥</div>
-          <div class="stack-name">PyTorch</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-icon">🤗</div>
-          <div class="stack-name">Diffusers</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-icon">🎛</div>
-          <div class="stack-name">Gradio</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-icon">⚡</div>
-          <div class="stack-name">CUDA</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-icon">🧠</div>
-          <div class="stack-name">Transformers</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-icon">🖼</div>
-          <div class="stack-name">SDXL</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-icon">🔗</div>
-          <div class="stack-name">LoRA</div>
-        </div>
-      </div>
+    <div class="contact-form">
+      <div class="form-group"><input type="text" placeholder="Your name"></div>
+      <div class="form-group"><input type="email" placeholder="Email address"></div>
+      <div class="form-group"><input type="text" placeholder="What&#39;s this about?"></div>
+      <div class="form-group"><textarea placeholder="Tell me about your project..."></textarea></div>
+      <button class="form-submit">Send Message →</button>
     </div>
-  </section>
+  </div>
+</section>
 
-  <div class="divider"></div>
+<footer>
+  <div class="footer-logo">TensorVizion · 2025</div>
+  <div class="footer-copy">AI Dev · Graphic Design · SEO · Audio Engineering</div>
+</footer>
 
-  <!-- ── SUPPORT ───────────────────────────────────────────────────────────── -->
-  <section id="support">
-    <div class="container">
-      <div class="support-inner">
-        <p class="section-label">// Support the work</p>
-        <h2 class="section-title">Keep the models coming.</h2>
-        <p class="section-desc">
-          Every model I release is free. If my work saves you time or sparks something
-          creative, a coffee or a membership goes a long way toward keeping the GPUs running.
-        </p>
-        <div class="support-btns">
-          <a href="https://ko-fi.com/tensorvizion" target="_blank" class="btn btn-kofi">☕ Support on Ko-fi</a>
-          <a href="https://patreon.com/tensorvizion" target="_blank" class="btn btn-patreon">🎨 Join on Patreon</a>
-        </div>
-        <div class="links-row">
-          <a href="https://huggingface.co/TensorVizion" target="_blank" class="plain-link">🤗 Hugging Face</a>
-          <a href="https://ko-fi.com/tensorvizion" target="_blank" class="plain-link">☕ Ko-fi</a>
-          <a href="https://patreon.com/tensorvizion" target="_blank" class="plain-link">🎨 Patreon</a>
-        </div>
-      </div>
-    </div>
-  </section>
+<script>
+/* === TENSOR CANVAS === */
+(function() {
+  const canvas = document.getElementById('tensor-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [], frame = 0;
+  const N = 52, MAX = 175;
+  const CYAN = {r:0,g:212,b:255}, VIOLET = {r:123,g:94,b:167};
 
-  <!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
-  <footer>
-    <div class="footer-left">
-      <span>Tensor</span>Vizion &nbsp;·&nbsp; All models released open-source on Hugging Face.
-    </div>
-    <a href="https://huggingface.co/TensorVizion" target="_blank" class="plain-link">huggingface.co/TensorVizion ↗</a>
-  </footer>
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 
-  <!-- ── JS: active nav link on scroll ─────────────────────────────────────── -->
-  <script>
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-links a');
+  function lerp(a, b, t) { return { r: a.r+(b.r-a.r)*t, g: a.g+(b.g-a.g)*t, b: a.b+(b.b-a.b)*t }; }
+  function rgba(c, a) { return `rgba(${c.r|0},${c.g|0},${c.b|0},${a})`; }
 
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          navLinks.forEach(a => a.classList.remove('active'));
-          const active = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
-          if (active) active.classList.add('active');
-        }
-      });
-    }, { rootMargin: '-40% 0px -55% 0px' });
+  function init() {
+    nodes = [];
+    for (let i = 0; i < N; i++) {
+      const s = 0.1 + Math.random() * 0.18;
+      nodes.push({ x: Math.random()*W, y: Math.random()*H, vx:(Math.random()-.5)*s, vy:(Math.random()-.5)*s, r:1.5+Math.random()*2, ph:Math.random()*Math.PI*2, ps:0.012+Math.random()*0.014 });
+    }
+  }
 
-    sections.forEach(s => observer.observe(s));
-  </script>
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    frame++;
+    for (const n of nodes) {
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>W) n.vx*=-1;
+      if(n.y<0||n.y>H) n.vy*=-1;
+    }
+    for (let i=0;i<nodes.length;i++) for (let j=i+1;j<nodes.length;j++) {
+      const a=nodes[i], b=nodes[j];
+      const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<MAX){
+        const t=1-d/MAX, p=(Math.sin(frame*.02+a.ph)+1)/2;
+        const c=lerp(CYAN,VIOLET,(a.ph%Math.PI)/Math.PI);
+        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle=rgba(c,t*t*.16*(0.6+0.4*p)); ctx.lineWidth=t*.8; ctx.stroke();
+      }
+    }
+    for (const n of nodes) {
+      const p=(Math.sin(frame*n.ps+n.ph)+1)/2;
+      const c=lerp(CYAN,VIOLET,(n.ph%Math.PI)/Math.PI);
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r*(0.8+0.3*p),0,Math.PI*2);
+      ctx.fillStyle=rgba(c,0.3+0.45*p); ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize',()=>{resize();init();});
+  resize(); init(); draw();
+})();
+
+/* === TABS === */
+function switchTab(idx) {
+  document.querySelectorAll('.exp-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.exp-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+}
+
+/* === SCROLL REVEAL === */
+(function() {
+  const obs = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) {
+      e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; obs.unobserve(e.target);
+    }
+  }, {threshold:0.08});
+  const els = document.querySelectorAll('.project-card,.stat-item,.about-grid,.contact-grid,.edu-card,.about-profile');
+  for (const el of els) { el.style.opacity='0'; el.style.transform='translateY(22px)'; el.style.transition='opacity 0.6s ease, transform 0.6s ease'; obs.observe(el); }
+})();
+</script>
 
 
-
-</body>
-
-</html>
+</body></html>
